@@ -1,0 +1,111 @@
+import java.io.*;
+import java.util.*;
+
+class Result {
+
+    /*
+     * Complete the 'matrixRotation' function below.
+     *
+     * The function accepts following parameters:
+     *  1. 2D_INTEGER_ARRAY matrix
+     *  2. INTEGER r
+     */
+
+    public static void matrixRotation(List<List<Integer>> matrix, int r) {
+        int m = matrix.size();
+        int n = matrix.get(0).size();
+        int numLayers = Math.min(m, n) / 2;
+
+        for (int layer = 0; layer < numLayers; layer++) {
+            List<Integer> ring = new ArrayList<>();
+
+            int top = layer;
+            int bottom = m - 1 - layer;
+            int left = layer;
+            int right = n - 1 - layer;
+
+            // 1. Traverse Left Column (Top to Bottom)
+            for (int i = top; i <= bottom; i++) {
+                ring.add(matrix.get(i).get(left));
+            }
+            // 2. Traverse Bottom Row (Left + 1 to Right)
+            for (int j = left + 1; j <= right; j++) {
+                ring.add(matrix.get(bottom).get(j));
+            }
+            // 3. Traverse Right Column (Bottom - 1 down to Top)
+            for (int i = bottom - 1; i >= top; i--) {
+                ring.add(matrix.get(i).get(right));
+            }
+            // 4. Traverse Top Row (Right - 1 down to Left + 1)
+            for (int j = right - 1; j > left; j--) {
+                ring.add(matrix.get(top).get(j));
+            }
+
+            // 2. Compute effective rotations
+            int len = ring.size();
+            int effR = r % len;
+
+            // 3. Write rotated values back into matrix
+            int index = effR; // Shift head forward by effR for anti-clockwise movement
+
+            // Write Left Column
+            for (int i = top; i <= bottom; i++) {
+                matrix.get(i).set(left, ring.get(index % len));
+                index++;
+            }
+            // Write Bottom Row
+            for (int j = left + 1; j <= right; j++) {
+                matrix.get(bottom).set(j, ring.get(index % len));
+                index++;
+            }
+            // Write Right Column
+            for (int i = bottom - 1; i >= top; i--) {
+                matrix.get(i).set(right, ring.get(index % len));
+                index++;
+            }
+            // Write Top Row
+            for (int j = right - 1; j > left; j--) {
+                matrix.get(top).set(j, ring.get(index % len));
+                index++;
+            }
+        }
+
+        // Fast I/O Output
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                sb.append(matrix.get(i).get(j)).append(" ");
+            }
+            sb.append("\n");
+        }
+        System.out.print(sb.toString());
+    }
+}
+
+public class Solution {
+    public static void main(String[] args) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        String[] firstMultipleInput = bufferedReader.readLine().trim().split(" ");
+        int m = Integer.parseInt(firstMultipleInput[0]);
+        int n = Integer.parseInt(firstMultipleInput[1]);
+        int r = Integer.parseInt(firstMultipleInput[2]);
+
+        List<List<Integer>> matrix = new ArrayList<>();
+
+        for (int i = 0; i < m; i++) {
+            String[] matrixRowTempItems = bufferedReader.readLine().trim().split(" ");
+            List<Integer> matrixRowItems = new ArrayList<>();
+
+            for (int j = 0; j < n; j++) {
+                int matrixItem = Integer.parseInt(matrixRowTempItems[j]);
+                matrixRowItems.add(matrixItem);
+            }
+            matrix.add(matrixRowItems);
+        }
+
+        Result.matrixRotation(matrix, r);
+
+        bufferedReader.close();
+    }
+}
