@@ -1,0 +1,29 @@
+import java.util.*;
+
+public class NaivePatternSearch {
+    public static List<Integer> searchPattern(String text, String pattern) {
+        List<Integer> indices = new ArrayList<>();
+        int n = text.length();
+        int m = pattern.length();
+
+        for (int i = 0; i <= n - m; i++) {
+            int j;
+            for (j = 0; j < m; j++) {
+                if (text.charAt(i + j) != pattern.charAt(j)) {
+                    break;
+                }
+            }
+            if (j == m) {
+                indices.add(i); // Pattern found at index i
+            }
+        }
+
+        return indices;
+    }
+
+    public static void main(String[] args) {
+        String text = "AABAACAADAABAABA";
+        String pattern = "AABA";
+        System.out.println("Pattern found at indices: " + searchPattern(text, pattern));
+    }
+}
