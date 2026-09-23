@@ -1,0 +1,53 @@
+import java.io.*;
+
+class Result {
+    public static void circularPalindromes(String s) {
+        int n = s.length();
+        String doubled = s + s;
+        
+        // Transform doubled string for Manacher's algorithm
+        StringBuilder sb = new StringBuilder("^");
+        for (int i = 0; i < doubled.length(); i++) {
+            sb.append("#").append(doubled.charAt(i));
+        }
+        sb.append("#$");
+        
+        String T = sb.toString();
+        int m = T.length();
+        int[] P = new int[m];
+        int C = 0, R = 0;
+
+        for (int i = 1; i < m - 1; i++) {
+            int iMirror = 2 * C - i;
+            if (R > i) P[i] = Math.min(R - i, P[iMirror]);
+            
+            while (T.charAt(i + 1 + P[i]) == T.charAt(i - 1 - P[i])) {
+                P[i]++;
+            }
+            if (i + P[i] > R) {
+                C = i;
+                R = i + P[i];
+            }
+        }
+
+        // For each cyclic shift offset k (0 to n - 1), compute max palindrome within bounds [k, k + n - 1]
+        StringBuilder output = new StringBuilder();
+        for (int k = 0; k < n; k++) {
+            int maxLen = 0;
+            int startBound = 2 * k + 1;
+            int endBound = 2 * (k + n) + 1;
+
+            for (int i = startBound; i <= endBound; i++) {
+                int radius = P[i];
+                // Clamp palindrome radius to window bounds
+                int leftDist = i - startBound;
+                int rightDist = endBound - i;
+                int maxRadius = Math.min(radius, Math.min(leftDist, rightDist));
+                maxLen = Math.max(maxLen, maxRadius);
+            }
+            output.append(maxLen).append("\n");
+        }
+
+        System.out.print(output.toString());
+    }
+}
