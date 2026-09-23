@@ -1,1 +1,8 @@
 
+class Solution {
+    public boolean repeatedSubstringPattern(String s) {
+        // Double string trick: if s is periodic, it must appear inside (s + s)[1 . 2n-2]
+        String doubled = s + s;
+        return doubled.substring(1, doubled.length() - 1).contains(s);
+    }
+}
